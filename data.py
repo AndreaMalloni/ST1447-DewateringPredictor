@@ -13,8 +13,8 @@ DESIRED_PARAMETERS = [
 
 
 def transform_data(df):
-    
-    df = df.filter(col("nome_parametro").isin(DESIRED_PARAMETERS))
+    df.printSchema()
+    # df = df.filter(col("nome_parametro").isin(DESIRED_PARAMETERS))
 
     windowSpec = Window.partitionBy("nome_parametro").orderBy("data_registrazione")
     df = df.withColumn("row_id", row_number().over(windowSpec))
@@ -32,8 +32,11 @@ def transform_data(df):
         min_val = df.select(
         when(col(column) != 0, col(column)).alias(column)
             ).agg({column: "min"}).collect()[0][0]
+        row_count = df.filter(col(column).isNotNull()).count()
+
         print(f"Max value for {column}: {max_val}")
         print(f"Min value for {column} (excluding 0): {min_val}")
+        print(f"Number of rows for {column}: {row_count}\n")
     
 
     return df
