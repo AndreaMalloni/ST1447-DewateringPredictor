@@ -1,8 +1,10 @@
+#!/home/andrea/TBDM/ST1447-DewateringPredictor/venv/bin/python
+
 from pyspark.sql import SparkSession
 from pyspark.ml.regression import LinearRegression
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.evaluation import RegressionEvaluator
-from data import transform_data, DESIRED_PARAMETERS
+from data.data import process_data
 import numpy as np
 import tensorflow as tf
 
@@ -59,19 +61,12 @@ if __name__ == "__main__":
     .appName("Linear Regression with PySpark MLlib") \
     .getOrCreate()
 
-    df = spark.read.csv("resources/dati_macchina.csv", header=True, inferSchema=True)
-    df = transform_data(df)
-    df.show(100)
+    df = spark.read.option("encoding", "ISO-8859-1").csv("ST1447-DewateringPredictor/data/resources/dati_macchina_01.csv", header=True, inferSchema=True)
+    train, test = process_data(df, "standard.json")
+    #df.show(100)
 
-    assembler = VectorAssembler(
-        inputCols=DESIRED_PARAMETERS,
-        outputCol="features")
 
-    data = assembler.transform(df)
-    final_data = data.select("features", "PV16_TorbiditàChiarificato")
 
-    train_data, test_data = final_data.randomSplit([0.8, 0.2], seed=42)
-
-    train_model_nn(train_data, test_data)
+    #train_model_nn(train_data, test_data)
 
     #train_model(train_data, test_data)
