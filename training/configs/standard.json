@@ -1,0 +1,14 @@
+{
+    "training_type": "lr",
+    "logging": true,
+    "source": "training/resources/",
+    "dataset_encoding": "ISO-8859-1",
+    "full_dataset": true,
+    "params": [],
+    "dataset_partitioning": {
+        "train": 0.8,
+        "test": 0.2,
+        "seed": 42
+    },
+    "prediction_feature": "PV16_Torbidit\u00e0Chiarificato"
+}
