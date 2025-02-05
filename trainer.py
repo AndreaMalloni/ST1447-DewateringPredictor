@@ -1,4 +1,4 @@
-#!/home/andrea/TBDM/ST1447-DewateringPredictor/venv/bin/python
+#!./venv/bin/python
 
 import argparse
 from datetime import datetime
