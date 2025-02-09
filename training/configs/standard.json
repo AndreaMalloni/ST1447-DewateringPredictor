@@ -2,7 +2,7 @@
     "training_type": "lr",
     "logging": true,
     "source": "training/resources/",
-    "dataset_encoding": "ISO-8859-1",
+    "dataset_encoding": "UTF-8",
     "full_dataset": true,
     "params": [],
     "dataset_partitioning": {

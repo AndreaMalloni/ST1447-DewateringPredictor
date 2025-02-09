@@ -47,8 +47,8 @@ def neural_network_regression(train_data: DataFrame, test_data: DataFrame, outpu
 
     try:
         logger.info("Converting train and test data to NumPy arrays for neural network training.")
-        train_features, train_labels = to_numpy_array(train_data, "features", outputLabel)
-        test_features, test_labels = to_numpy_array(test_data, "features", outputLabel)
+        train_features, train_labels = to_numpy_array(train_data, "features", outputLabel, config)
+        test_features, test_labels = to_numpy_array(test_data, "features", outputLabel, config)
 
         logger.info("Initializing Neural Network model training.")
         model = tf.keras.Sequential([
@@ -109,11 +109,18 @@ if __name__ == "__main__":
             
             spark = SparkSession.builder \
             .appName("Linear Regression with PySpark MLlib") \
+            .config("spark.executor.memory", "8g") \
+            .config("spark.driver.memory", "8g") \
+            .config("spark.memory.offHeap.enabled", "true") \
+            .config("spark.memory.offHeap.size", "4g") \
+            .config("spark.sql.shuffle.partitions", "100") \
+            .config("spark.sql.autoBroadcastJoinThreshold", "-1") \
             .getOrCreate()
             logger.info("Spark session started successfully.")
 
             logger.info("Reading and preprocessing the dataset.")
-            df = spark.read.option("encoding", config["dataset_encoding"]).csv(config["source"], header=True, inferSchema=True)
+            df: DataFrame = spark.read.option("encoding", "UTF-8").csv(config["source"], header=True, inferSchema=True)
+            df = df.repartition(100)
             df = process_data(df, config)
 
             logger.info("Transforming data into feature vectors.")

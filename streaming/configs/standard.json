@@ -1,0 +1,28 @@
+{
+    "broker_address": "localhost",
+    "broker_port": "9092",
+    "topic": "dati_macchina",
+    "params": [
+        "PV01_GiriMinutoTamburo",
+        "PV02_GiriMinutoCoclea",
+        "PV05_MisuratorePortataFanghi",
+        "PV06_MisuratorePortataPoly",
+        "PV35_ConcentrazionePoly",
+        "PV03_Pressione",
+        "PV04_AssorbimentoDecanter",
+        "PV07_Vibrazioni",
+        "PV08_TempCuscinetto1In",
+        "PV09_TempCuscinetto1Out",
+        "PV10_GiriDifferenziali",
+        "PV15_TorbiditàFango",
+        "PV17_UmiditàUscitaFango",
+        "PV28_PotenzaIstantaneaImpianto",
+        "PV29_ConsumoEnergeticoImpianto",
+        "PV31_AssorbimentoCorrenteImpianto",
+        "PV32_Latitudine",
+        "PV33_Longitudine",
+        "PV34_MisuraLivelli",
+        "PV38_StatoMacchina"
+    ],
+    "prediction_feature": "PV16_TorbiditaChiarificato"
+}

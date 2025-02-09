@@ -17,45 +17,48 @@ def process_data(df: DataFrame, config: str) -> DataFrame:
     logger = LoggerManager.get_logger(f'[Processing] {datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log', enabled=config["logging"])
 
     try:
-        logger.info("Inizio elaborazione dei dati.")
-        logger.info(f"Caricamento configurazione da 'configs/{config}'.")
+        logger.info("Starting data processing")
+        df = df.sample(fraction=0.5, seed=42)
 
         if not config["full_dataset"]:
-            logger.info("Filtraggio dei dati in base ai parametri specificati nella configurazione.")
+            logger.info("Filtering data based on params specfied in the configuration.")
             df = df.filter(col("nome_parametro").isin(config["params"]))
 
         window_spec = Window.partitionBy("nome_parametro").orderBy("data_registrazione")
         df = df.withColumn("row_id", row_number().over(window_spec))
 
-        logger.info("Pivot dei dati e aggregazione per 'nome_parametro'.")
+        logger.info("Pivoting and aggregating data by 'nome_parametro'.")
         df = df.select("row_id", "nome_parametro", "valore") \
             .groupBy("row_id") \
             .pivot("nome_parametro") \
-            .agg({"valore": "first"})
+            .agg({"valore": "first"}) \
+            .cache()
         df = df.drop("row_id")
-
-        logger.info("Raggruppamento dei dati per identificare duplicati con count > 1.")
+        
+        logger.info("Data grouping to identify duplicates with count > 1.")
         df = df.groupBy(df.columns).count().filter("count > 1")
         df = df.dropDuplicates()
 
         if config["logging"]: 
             for column in df.columns:
-                logger.info(f"Analisi della colonna '{column}'...")
+                logger.info(f"Analyzing '{column}'...")
                 max_val = df.agg({column: "max"}).collect()[0][0]
                 min_val = df.select(
                     when(col(column) != 0, col(column)).alias(column)
                 ).agg({column: "min"}).collect()[0][0]
                 row_count = df.filter(col(column).isNotNull()).count()
 
-                logger.info(f"Valore massimo per {column}: {max_val}")
-                logger.info(f"Valore minimo per {column} (escludendo 0): {min_val}")
-                logger.info(f"Numero di righe non nulle per {column}: {row_count}\n")            
+                logger.info(f"Maximum value for {column}: {max_val}")
+                logger.info(f"Minimum value for {column} (excluding 0): {min_val}")
+                logger.info(f"Number of null rows for {column}: {row_count}\n")            
 
-            logger.info("Elaborazione completata con successo.")
+            logger.info("Processing succesfully completed.")
+        df = df.drop("count")
+
         return df
 
     except Exception as e:
-        logger.error(f"Errore durante l'elaborazione dei dati: {e}")
+        logger.error(f"Error during data processing: {e}")
         raise
 
 
@@ -77,8 +80,12 @@ def to_pyspark_vector(df: DataFrame, config: str) -> Tuple[DataFrame, DataFrame]
 
     try:
         logger.info("Initializing VectorAssembler for feature transformation.")
+        
+        feature_columns = config["params"] if config["params"] else df.columns.copy()
+        if config["prediction_feature"] in feature_columns: feature_columns.remove(config["prediction_feature"])
+        
         assembler = VectorAssembler(
-            inputCols=config["params"] if config["params"] else df.columns,
+            inputCols=feature_columns,
             outputCol="features",
             handleInvalid="skip"
         )
