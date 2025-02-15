@@ -1,0 +1,13 @@
+{
+    "broker_address": "localhost",
+    "broker_port": "9092",
+    "topic": "dati_macchina",
+    "params": [
+        "PV02_GiriMinutoCoclea",
+        "PV01_GiriMinutoTamburo",
+        "PV06_MisuratorePortataPoly",
+        "PV05_MisuratorePortataFanghi",
+        "PV35_ConcentrazionePoly"
+    ],
+    "prediction_feature": "PV16_TorbiditaChiarificato"
+}

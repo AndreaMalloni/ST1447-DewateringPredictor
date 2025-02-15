@@ -18,11 +18,13 @@ def process_data(df: DataFrame, config: str) -> DataFrame:
 
     try:
         logger.info("Starting data processing")
-        df = df.sample(fraction=0.5, seed=42)
 
         if not config["full_dataset"]:
             logger.info("Filtering data based on params specfied in the configuration.")
             df = df.filter(col("nome_parametro").isin(config["params"]))
+
+        df = df.sample(fraction=config["dataset_partitioning"]["sample"], seed=config["dataset_partitioning"]["seed"])
+        df = df.na.drop("all")
 
         window_spec = Window.partitionBy("nome_parametro").orderBy("data_registrazione")
         df = df.withColumn("row_id", row_number().over(window_spec))

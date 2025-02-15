@@ -9,9 +9,11 @@
         "PV01_GiriMinutoTamburo",
         "PV06_MisuratorePortataPoly",
         "PV05_MisuratorePortataFanghi",
-        "PV35_ConcentrazionePoly"
+        "PV35_ConcentrazionePoly",
+        "PV16_Torbidit\u00e0Chiarificato"
     ],
     "dataset_partitioning": {
+        "sample": 1.0,
         "train": 0.8,
         "test": 0.2,
         "seed": 42

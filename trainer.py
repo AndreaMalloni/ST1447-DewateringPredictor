@@ -116,6 +116,7 @@ if __name__ == "__main__":
             .config("spark.sql.shuffle.partitions", "100") \
             .config("spark.sql.autoBroadcastJoinThreshold", "-1") \
             .getOrCreate()
+            spark.sparkContext.setLogLevel("ERROR")
             logger.info("Spark session started successfully.")
 
             logger.info("Reading and preprocessing the dataset.")
