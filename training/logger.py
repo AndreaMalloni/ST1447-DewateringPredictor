@@ -1,3 +1,5 @@
+from ctypes import ArgumentError
+from datetime import datetime
 import logging
 import os
 from typing import Optional
@@ -5,28 +7,18 @@ from typing import Optional
 LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
 
 class LoggerManager:
-    """
-    Singleton per la gestione dei logger. Crea e restituisce un logger per ciascun file di log richiesto.
-    """
-
-    _instances = {}
+    _instances = {
+        "Training": None,
+        "Processing": None
+    }
 
     def __new__(cls, *args, **kwargs):
-        """Garantisce che LoggerManager sia un singleton."""
         if not hasattr(cls, "_instance"):
             cls._instance = super(LoggerManager, cls).__new__(cls)
         return cls._instance
 
     @staticmethod
-    def get_logger(log_filename: Optional[str], log_dir: str = LOG_DIR, enabled: bool = True) -> logging.Logger:
-        """
-        Restituisce un oggetto logger configurato o un logger "neutro" se logging è disabilitato.
-
-        :param log_filename: Nome del file di log (es: "training.log"). Se None, restituisce un logger neutro.
-        :param log_dir: Directory in cui salvare i file di log (default: "logs").
-        :param enabled: Flag per abilitare o disabilitare il logging (default: True).
-        :return: Oggetto logging.Logger configurato o neutro.
-        """
+    def get_logger(type: str, log_dir: str = LOG_DIR, enabled: bool = True) -> logging.Logger:
         if not enabled:
             # Logger neutro che ignora i log
             logger = logging.getLogger("null_logger")
@@ -36,7 +28,12 @@ class LoggerManager:
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
 
-        if log_filename not in LoggerManager._instances:
+        if type not in ("Training", "Processing"):
+            raise ArgumentError("Invalid logger type.")
+
+        log_filename = f'[{type}] {datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log'
+
+        if not LoggerManager._instances[type]:
             logger = logging.getLogger(log_filename)
             if not logger.hasHandlers():  # Evita di aggiungere più handler al logger
                 logger.setLevel(logging.INFO)
@@ -48,6 +45,6 @@ class LoggerManager:
 
                 logger.addHandler(file_handler)
 
-            LoggerManager._instances[log_filename] = logger
+            LoggerManager._instances[type] = logger
 
-        return LoggerManager._instances[log_filename]
+        return LoggerManager._instances[type]

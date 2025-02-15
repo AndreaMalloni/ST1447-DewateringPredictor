@@ -7,6 +7,7 @@ from pyspark.sql.functions import col, row_number, when
 from pyspark.ml.feature import VectorAssembler
 from typing import Tuple
 from pyspark.sql import Window
+from pyspark.ml.feature import StandardScaler
 
 
 __all__ = ["process_data", "to_numpy_array", "to_pyspark_vector", "CONFIG_DIR"]
@@ -14,7 +15,7 @@ __all__ = ["process_data", "to_numpy_array", "to_pyspark_vector", "CONFIG_DIR"]
 CONFIG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "configs")
 
 def process_data(df: DataFrame, config: str) -> DataFrame:
-    logger = LoggerManager.get_logger(f'[Processing] {datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log', enabled=config["logging"])
+    logger = LoggerManager.get_logger("Processing", enabled=config["logging"])
 
     try:
         logger.info("Starting data processing")
@@ -65,7 +66,7 @@ def process_data(df: DataFrame, config: str) -> DataFrame:
 
 
 def to_numpy_array(df: DataFrame, features_col: str, label_col: str, config: str) -> Tuple[np.ndarray, np.ndarray]:
-    logger = LoggerManager.get_logger(f'[Processing] {datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log', enabled=config["logging"])
+    logger = LoggerManager.get_logger("Processing", enabled=config["logging"])
 
     try:
         logger.info("Converting DataFrame to NumPy arrays.")
@@ -78,23 +79,27 @@ def to_numpy_array(df: DataFrame, features_col: str, label_col: str, config: str
         raise
 
 def to_pyspark_vector(df: DataFrame, config: str) -> Tuple[DataFrame, DataFrame]:
-    logger = LoggerManager.get_logger(f'[Processing] {datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log', enabled=config["logging"])
+    logger = LoggerManager.get_logger("Processing", enabled=config["logging"])
 
     try:
         logger.info("Initializing VectorAssembler for feature transformation.")
         
         feature_columns = config["params"] if config["params"] else df.columns.copy()
-        if config["prediction_feature"] in feature_columns: feature_columns.remove(config["prediction_feature"])
+        if config["prediction_feature"] in feature_columns:
+            feature_columns.remove(config["prediction_feature"])
         
-        assembler = VectorAssembler(
-            inputCols=feature_columns,
-            outputCol="features",
-            handleInvalid="skip"
-        )
+        assembler = VectorAssembler(inputCols=feature_columns, outputCol="raw_features", handleInvalid="skip")
         data = assembler.transform(df)
+
+        if config.get("feature_scaling", False):  # Controlla se lo scaling è abilitato nel config
+            logger.info("Applying StandardScaler to features.")
+            scaler = StandardScaler(inputCol="raw_features", outputCol="features", withMean=True, withStd=True)
+            data = scaler.fit(data).transform(data)
+        else:
+            data = data.withColumnRenamed("raw_features", "features")
+
         logger.info("Feature transformation completed successfully.")
 
-        logger.info("Selecting features and label columns.")
         final_data = data.select("features", config["prediction_feature"])
 
         logger.info("Splitting data into training and testing sets.")
@@ -105,7 +110,7 @@ def to_pyspark_vector(df: DataFrame, config: str) -> Tuple[DataFrame, DataFrame]
         logger.info("Data split completed successfully.")
         return train_data, test_data
     except Exception as e:
-        logger.error(f"Error during data splitting: {e}")
+        logger.error(f"Error during data transformation: {e}")
         raise
 
 if __name__ == "__main__":

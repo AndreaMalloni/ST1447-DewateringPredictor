@@ -11,5 +11,6 @@
         "test": 0.2,
         "seed": 42
     },
-    "prediction_feature": "PV16_Torbidit\u00e0Chiarificato"
+    "prediction_feature": "PV16_Torbidit\u00e0Chiarificato",
+    "feature_scaling": true
 }

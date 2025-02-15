@@ -11,6 +11,7 @@ import numpy as np
 import tensorflow as tf
 from training.data import *
 from training.logger import LoggerManager
+from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
 
 
 MODELS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
@@ -18,23 +19,36 @@ if not os.path.exists(MODELS_DIR):
     os.makedirs(MODELS_DIR)
 
 
-def linear_regression(train_data: DataFrame, test_data: DataFrame, outputLabel: str, config: str) -> None:
-    logger = LoggerManager.get_logger(f'[Training] {datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log', enabled=config["logging"])
+def linear_regression(train_data: DataFrame, test_data: DataFrame, prediction_feature: str, config: str) -> None:
+    logger = LoggerManager.get_logger("Training", enabled=config["logging"])
 
     try:
         logger.info("Initializing Linear Regression model training.")
-        lr = LinearRegression(featuresCol="features", labelCol=outputLabel, predictionCol="Predicted_PV16_TorbiditaChiarificato", regParam=0.01)
-        lr_model = lr.fit(train_data)
+        lr = LinearRegression(featuresCol="features", labelCol=prediction_feature)
+
+        paramGrid = ParamGridBuilder() \
+            .addGrid(lr.maxIter, [10, 100, 1000]) \
+            .addGrid(lr.regParam, [0.01, 0.1, 0.5, 1.0]) \
+            .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0]) \
+            .build()
+
+        crossval = CrossValidator(estimator=lr,
+                      estimatorParamMaps=paramGrid,
+                      evaluator=RegressionEvaluator(predictionCol = "prediction", labelCol=prediction_feature),
+                      numFolds=3)
+
+        cvModel = crossval.fit(train_data)
+        lr_model = cvModel.bestModel
 
         logger.info("Linear Regression model training completed.")
         predictions = lr_model.transform(test_data)
 
         logger.info("Evaluating Linear Regression model.")
-        evaluator = RegressionEvaluator(labelCol=outputLabel, predictionCol="Predicted_PV16_TorbiditaChiarificato", metricName="rmse")
+        evaluator = RegressionEvaluator(labelCol=prediction_feature, metricName="rmse")
         rmse = evaluator.evaluate(predictions)
         logger.info(f"Root Mean Squared Error (RMSE) on test data: {rmse:.3f}")
 
-        evaluator_r2 = RegressionEvaluator(labelCol=outputLabel, predictionCol="Predicted_PV16_TorbiditaChiarificato", metricName="r2")
+        evaluator_r2 = RegressionEvaluator(labelCol=prediction_feature, metricName="r2")
         r2 = evaluator_r2.evaluate(predictions)
         logger.info(f"R-squared (R2) on test data: {r2:.3f}")
         return lr_model
@@ -42,13 +56,13 @@ def linear_regression(train_data: DataFrame, test_data: DataFrame, outputLabel: 
         logger.error(f"Error during Linear Regression training: {e}")
         raise
 
-def neural_network_regression(train_data: DataFrame, test_data: DataFrame, outputLabel: str, config: str) -> None:
-    logger = LoggerManager.get_logger(f'[Training] {datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log', enabled=config["logging"])
+def neural_network_regression(train_data: DataFrame, test_data: DataFrame, prediction_feature: str, config: str) -> None:
+    logger = LoggerManager.get_logger("Training", enabled=config["logging"])
 
     try:
         logger.info("Converting train and test data to NumPy arrays for neural network training.")
-        train_features, train_labels = to_numpy_array(train_data, "features", outputLabel, config)
-        test_features, test_labels = to_numpy_array(test_data, "features", outputLabel, config)
+        train_features, train_labels = to_numpy_array(train_data, "features", prediction_feature, config)
+        test_features, test_labels = to_numpy_array(test_data, "features", prediction_feature, config)
 
         logger.info("Initializing Neural Network model training.")
         model = tf.keras.Sequential([
@@ -104,7 +118,7 @@ if __name__ == "__main__":
         with open(os.path.join(CONFIG_DIR, args.config)) as configfile:
             config = json.load(configfile)
 
-            logger = LoggerManager.get_logger(f'[Training] {datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log', enabled=config["logging"])
+            logger = LoggerManager.get_logger("Training", enabled=config["logging"])
             logger.info(f"Loaded training configuration: {args.config}")
             
             spark = SparkSession.builder \
