@@ -21,6 +21,7 @@ if not os.path.exists(MODELS_DIR):
 
 def linear_regression(train_data: DataFrame, test_data: DataFrame, prediction_feature: str, config: str) -> None:
     logger = LoggerManager.get_logger("Training", enabled=config["logging"])
+    logger.info("Starting Linear Regression training.")
 
     try:
         logger.info("Initializing Linear Regression model training.")
@@ -58,6 +59,7 @@ def linear_regression(train_data: DataFrame, test_data: DataFrame, prediction_fe
 
 def neural_network_regression(train_data: DataFrame, test_data: DataFrame, prediction_feature: str, config: str) -> None:
     logger = LoggerManager.get_logger("Training", enabled=config["logging"])
+    logger.info("Starting Neural Network training.")
 
     try:
         logger.info("Converting train and test data to NumPy arrays for neural network training.")
@@ -143,10 +145,8 @@ if __name__ == "__main__":
 
             model = None
             if config["training_type"] == 'lr':
-                logger.info("Starting Linear Regression training.")
                 model = linear_regression(train_data, test_data, config["prediction_feature"], config)
             elif config["training_type"] == 'nn':
-                logger.info("Starting Neural Network training.")
                 model = neural_network_regression(train_data, test_data, config["prediction_feature"], config)
 
             if model:

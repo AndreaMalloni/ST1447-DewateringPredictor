@@ -24,7 +24,11 @@ def process_data(df: DataFrame, config: str) -> DataFrame:
             logger.info("Filtering data based on params specfied in the configuration.")
             df = df.filter(col("nome_parametro").isin(config["params"]))
 
-        df = df.sample(fraction=config["dataset_partitioning"]["sample"], seed=config["dataset_partitioning"]["seed"])
+        if config["dataset_partitioning"]["sample"] is not 1:
+            df = df.sample(
+                fraction=config["dataset_partitioning"]["sample"], 
+                seed=config["dataset_partitioning"]["seed"])
+            
         df = df.na.drop("all")
 
         window_spec = Window.partitionBy("nome_parametro").orderBy("data_registrazione")
@@ -44,18 +48,8 @@ def process_data(df: DataFrame, config: str) -> DataFrame:
 
         if config["logging"]: 
             for column in df.columns:
-                logger.info(f"Analyzing '{column}'...")
-                max_val = df.agg({column: "max"}).collect()[0][0]
-                min_val = df.select(
-                    when(col(column) != 0, col(column)).alias(column)
-                ).agg({column: "min"}).collect()[0][0]
-                row_count = df.filter(col(column).isNotNull()).count()
+                logger.info(df.select(column).describe().toPandas().to_string())   
 
-                logger.info(f"Maximum value for {column}: {max_val}")
-                logger.info(f"Minimum value for {column} (excluding 0): {min_val}")
-                logger.info(f"Number of null rows for {column}: {row_count}\n")            
-
-            logger.info("Processing succesfully completed.")
         df = df.drop("count")
 
         return df
