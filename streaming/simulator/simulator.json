@@ -1,0 +1,18 @@
+{
+  "workflows": [
+    {
+      "workflowName": "macchinario",
+      "workflowFilename": "workflow.json"
+    }
+  ],
+  "producers": [
+    {
+      "type": "kafka",
+      "broker.server": "broker",
+      "broker.port": 29092,
+      "topic": "dati_macchina",
+      "flatten": false,
+      "sync": false
+  }
+  ]
+}

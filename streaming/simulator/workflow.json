@@ -1,0 +1,221 @@
+{
+    "repeatWorkflow": true,
+    "timeBetweenRepeat": 4000,
+    "varyRepeatFrequency": true,
+    "steps": [
+        {
+            "config": [
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "integer(3165, 3213)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV01_GiriMinutoTamburo",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "integer(1691, 2918)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV02_GiriMinutoCoclea",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(0.01, 6.18)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV05_MisuratorePortataFanghi",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(1.33, 1.38)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV06_MisuratorePortataPoly",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(0, 6.1)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV16_TorbiditàChiarificato",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(0.85, 0.9)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV35_ConcentrazionePoly",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(-0.8, 107.0)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV03_Pressione",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(26.0, 27.2)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV04_AssorbimentoDecanter",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(2.8, 6.7)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV07_Vibrazioni",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(21.0, 53.7)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV08_TempCuscinetto1In",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(19.0, 54.4)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV09_TempCuscinetto1Out",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(5.2, 6.3)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV10_GiriDifferenziali",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(12, 39.4)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV15_TorbiditàFango",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(0, 38)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV17_UmiditàUscitaFango",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(0, 24.4)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV28_PotenzaIstantaneaImpianto",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(31573.9, 37400.4)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV29_ConsumoEnergeticoImpianto",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(0, 44.8)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV31_AssorbimentoCorrenteImpianto",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "0",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV32_Latitudine",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "0",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV33_Longitudine",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "0",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV34_MisuraLivelli",
+                    "tipo_dato": "number"
+                },
+                {
+                    "id": "uuid()",
+                    "id_macchina": "65f850b321e42e5ffa7cf088",
+                    "valore": "double(1.0, 1.0)",
+                    "data_registrazione": "now()",
+                    "createdAt": "now()",
+                    "updatedAt": "now()",
+                    "nome_parametro": "PV38_StatoMacchina",
+                    "tipo_dato": "number"
+                }
+            ]
+        }
+    ]
+}
